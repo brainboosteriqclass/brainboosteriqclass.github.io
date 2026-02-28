@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="si">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Student Area • Brain Booster IQ Class</title>
+  <style>
+    :root{--bg:#f3f4f6;--card:#fff;--ink:#0b1220;--muted:#5b6472;--brand:#111827;--wa:#25D366;}
+    body{margin:0;font-family:Arial;background:var(--bg);color:var(--ink)}
+    .top{background:var(--brand);color:#fff;padding:16px}
+    .wrap{max-width:980px;margin:0 auto;padding:0 14px}
+    nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    nav a{color:#fff;text-decoration:none;padding:8px 10px;border:1px solid rgba(255,255,255,.25);border-radius:10px}
+    .card{background:var(--card);border-radius:16px;box-shadow:0 8px 25px rgba(0,0,0,.08);padding:16px;margin:16px 0}
+    .muted{color:var(--muted);line-height:1.6}
+    .btn{display:inline-block;text-decoration:none;border-radius:12px;padding:10px 14px;font-weight:bold}
+    .btn.wa{background:var(--wa);color:#fff}
+    input{padding:10px 12px;border-radius:12px;border:1px solid #d1d5db;width:100%;max-width:420px}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{padding:10px;border-bottom:1px solid #e5e7eb;text-align:left;font-size:14px}
+    th{background:#f9fafb}
+    .tag{display:inline-block;padding:4px 8px;border-radius:999px;background:#eef2ff;color:#3730a3;font-size:12px}
+    .cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    @media(max-width:900px){.cols{grid-template-columns:1fr}}
+    a.dl{color:#111827;text-decoration:none;font-weight:bold}
+    a.dl:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+      <div style="font-size:22px;font-weight:800">Student Area</div>
+      <a class="btn wa" href="https://wa.me/94777238519">WhatsApp Help</a>
+    </div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="student-area.html">Student Area</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="cols">
+
+    <section class="card">
+      <h2>📥 Downloads</h2>
+      <p class="muted">Papers / Worksheets list එක <b>data/downloads.json</b> file එක edit කරලා update කරන්න.</p>
+      <div id="downloads"></div>
+    </section>
+
+    <section class="card">
+      <h2>🏅 Results</h2>
+      <p class="muted">Search by student name / index / test name.</p>
+      <input id="q" placeholder="Search (e.g., Nimal / 04 / Test 1)"/>
+      <div class="muted" style="margin-top:8px">
+        Data file: <b>data/results.json</b> (ඔයා edit කරලා update කරන්න)
+      </div>
+      <div id="results"></div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+async function loadJSON(path){
+  const r = await fetch(path, {cache:"no-store"});
+  if(!r.ok) throw new Error("Failed to load " + path);
+  return await r.json();
+}
+
+function renderDownloads(items){
+  if(!items.length) return "<div class='muted'>No downloads yet.</div>";
+  return items.map(x => `
+    <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #e5e7eb">
+      <div>
+        <div><a class="dl" href="${x.url}" target="_blank" rel="noopener">${x.title}</a></div>
+        <div class="muted" style="font-size:13px">${x.note || ""}</div>
+      </div>
+      <span class="tag">${x.type || "PDF"}</span>
+    </div>
+  `).join("");
+}
+
+function renderResults(rows){
+  if(!rows.length) return "<div class='muted' style='margin-top:10px'>No matching results.</div>";
+  const head = `
+    <table>
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>Index</th>
+          <th>Test</th>
+          <th>Marks</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+  const body = rows.map(r => `
+    <tr>
+      <td>${r.student}</td>
+      <td>${r.index}</td>
+      <td>${r.test}</td>
+      <td><b>${r.marks}</b> / ${r.outof}</td>
+    </tr>
+  `).join("");
+  return head + body + "</tbody></table>";
+}
+
+let ALL_RESULTS = [];
+(async () => {
+  try{
+    const dls = await loadJSON("data/downloads.json");
+    document.getElementById("downloads").innerHTML = renderDownloads(dls);
+
+    ALL_RESULTS = await loadJSON("data/results.json");
+    document.getElementById("results").innerHTML = renderResults(ALL_RESULTS);
+  }catch(e){
+    document.getElementById("downloads").innerHTML = "<div class='muted'>Cannot load downloads.json</div>";
+    document.getElementById("results").innerHTML = "<div class='muted'>Cannot load results.json</div>";
+  }
+})();
+
+document.getElementById("q").addEventListener("input", (ev)=>{
+  const s = ev.target.value.trim().toLowerCase();
+  const filtered = !s ? ALL_RESULTS : ALL_RESULTS.filter(r =>
+    (r.student||"").toLowerCase().includes(s) ||
+    (r.index||"").toLowerCase().includes(s) ||
+    (r.test||"").toLowerCase().includes(s)
+  );
+  document.getElementById("results").innerHTML = renderResults(filtered);
+});
+</script>
+</body>
+</html>

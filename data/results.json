@@ -1,0 +1,5 @@
+[
+  {"student":"Nimal", "index":"01", "test":"Test 1", "marks":32, "outof":40},
+  {"student":"Kavindi", "index":"02", "test":"Test 1", "marks":36, "outof":40},
+  {"student":"Sahan", "index":"03", "test":"Test 1", "marks":28, "outof":40}
+]

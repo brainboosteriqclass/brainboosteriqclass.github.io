@@ -1,93 +1,89 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="si">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Brain Booster IQ Class</title>
-
-<style>
-
-body{
-font-family: Arial;
-margin:0;
-background:#f4f4f4;
-text-align:center;
-}
-
-.header{
-background:#000;
-color:white;
-padding:15px;
-font-size:28px;
-font-weight:bold;
-}
-
-.poster{
-width:100%;
-max-width:800px;
-margin-top:20px;
-border-radius:15px;
-box-shadow:0 0 20px rgba(0,0,0,0.3);
-}
-
-.box{
-background:white;
-margin:20px;
-padding:20px;
-border-radius:10px;
-}
-
-.whatsapp{
-display:inline-block;
-background:#25D366;
-color:white;
-padding:15px 25px;
-font-size:20px;
-border-radius:10px;
-text-decoration:none;
-margin-top:10px;
-}
-
-.footer{
-background:black;
-color:white;
-padding:15px;
-margin-top:20px;
-}
-
-</style>
-
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Brain Booster IQ Class</title>
+  <style>
+    :root{--bg:#f3f4f6;--card:#fff;--ink:#0b1220;--muted:#5b6472;--brand:#111827;--wa:#25D366;}
+    *{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
+    .top{background:var(--brand);color:#fff;padding:16px 14px}
+    .wrap{max-width:980px;margin:0 auto;padding:0 14px}
+    nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    nav a{color:#fff;text-decoration:none;padding:8px 10px;border:1px solid rgba(255,255,255,.25);border-radius:10px}
+    nav a:hover{background:rgba(255,255,255,.12)}
+    .hero{padding:18px 0 8px}
+    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}
+    @media(max-width:820px){.grid{grid-template-columns:1fr}}
+    .card{background:var(--card);border-radius:16px;box-shadow:0 8px 25px rgba(0,0,0,.08);padding:16px}
+    .poster{width:100%;border-radius:14px;box-shadow:0 10px 25px rgba(0,0,0,.18)}
+    .btn{display:inline-block;text-decoration:none;border-radius:12px;padding:12px 16px;font-weight:bold}
+    .btn.wa{background:var(--wa);color:#fff}
+    .btn.dark{background:#111827;color:#fff}
+    .muted{color:var(--muted);line-height:1.6}
+    .footer{margin-top:18px;background:#0b1220;color:#cbd5e1;padding:14px;font-size:14px}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#eef2ff;color:#3730a3;font-size:12px;font-weight:bold}
+  </style>
 </head>
-
 <body>
 
-<div class="header">
-Brain Booster IQ Class
-</div>
+<header class="top">
+  <div class="wrap">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:22px;font-weight:800">Brain Booster IQ Class</div>
+        <div style="opacity:.85;font-size:14px">Grade 5 Scholarship IQ • Sinhala Medium</div>
+      </div>
+      <a class="btn wa" href="https://wa.me/94777238519">WhatsApp Join</a>
+    </div>
 
-<img src="poster.jpg" class="poster">
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="student-area.html">Student Area</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</header>
 
-<div class="box">
+<main class="wrap hero">
+  <div class="grid">
+    <div class="card">
+      <span class="pill">New</span>
+      <h2 style="margin:10px 0 8px">Welcome 👋</h2>
+      <p class="muted">
+        Brain Booster IQ Class – ශිෂ්‍යත්ව විභාගයට අවශ්‍ය IQ & Reasoning පුහුණුව,
+        model papers, worksheets, සහ results tracking එකම තැනක.
+      </p>
 
-<h2>පාසල් ශිෂ්‍යත්ව IQ පන්තිය</h2>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+        <a class="btn dark" href="student-area.html">Go to Student Area</a>
+        <a class="btn wa" href="https://wa.me/94777238519">Ask on WhatsApp</a>
+      </div>
 
-<p>
-සිතීමට පුහුණු කරන විශේෂ පන්ති<br>
-Gampaha
-</p>
+      <hr style="border:none;border-top:1px solid #e5e7eb;margin:14px 0">
 
-<a class="whatsapp" href="https://wa.me/94777238519">
-WhatsApp Join
-</a>
+      <div class="muted">
+        <b>Teacher:</b> Manoj Aththanapola<br>
+        <b>Location:</b> Negombo<br>
+        <b>Contact:</b> 0777 238 519
+      </div>
+    </div>
 
-</div>
+    <div class="card">
+      <img class="poster" src="poster.jpg" alt="Brain Booster Poster">
+      <div class="muted" style="margin-top:10px">
+        Tip: Update your poster anytime by replacing <b>poster.jpg</b> (same name).
+      </div>
+    </div>
+  </div>
+</main>
 
-<div class="footer">
-
-Manoj Aththanapola<br>
-0777 238 519
-
-</div>
+<footer class="footer">
+  <div class="wrap">
+    © Brain Booster IQ Class • WhatsApp: 0777 238 519
+  </div>
+</footer>
 
 </body>
 </html>
