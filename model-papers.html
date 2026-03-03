@@ -1,125 +1,81 @@
 <!doctype html>
 <html lang="si">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Model Papers • Brain Booster</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Model Papers • Brain Booster IQ Class</title>
 
-  <!-- PDF.js (official build) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.js"></script>
+<style>
+:root{
+  --bg:#f3f4f6; --card:#fff; --ink:#0b1220; --muted:#5b6472;
+  --brand:#111827; --wa:#25D366; --line:#e5e7eb;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
+.top{background:var(--brand);color:#fff;padding:16px 14px}
+.wrap{max-width:1100px;margin:0 auto;padding:0 14px}
+nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+nav a{color:#fff;text-decoration:none;padding:8px 10px;border:1px solid rgba(255,255,255,.25);border-radius:10px}
+nav a:hover{background:rgba(255,255,255,.12)}
+.btn{display:inline-block;text-decoration:none;border-radius:12px;padding:12px 16px;font-weight:bold}
+.btn.wa{background:var(--wa);color:#fff}
+.hero{padding:18px 0 22px}
 
-  <style>
-    :root{
-      --bg:#f3f4f6; --card:#fff; --ink:#0b1220; --muted:#5b6472;
-      --brand:#111827; --wa:#25D366; --line:#e5e7eb;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
-    .top{background:var(--brand);color:#fff;padding:16px}
-    .wrap{max-width:1100px;margin:0 auto;padding:0 14px}
-    nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-    nav a{color:#fff;text-decoration:none;padding:8px 10px;border:1px solid rgba(255,255,255,.25);border-radius:10px}
-    nav a:hover{background:rgba(255,255,255,.12)}
-    .btn{display:inline-block;text-decoration:none;border-radius:12px;padding:10px 14px;font-weight:bold;border:0;cursor:pointer}
-    .btn.wa{background:var(--wa);color:#fff}
-    .btn.dark{background:#111827;color:#fff}
-    .card{background:var(--card);border-radius:16px;box-shadow:0 8px 25px rgba(0,0,0,.08);padding:16px;margin:16px 0}
-    .muted{color:var(--muted);line-height:1.6}
+.card{background:var(--card);border-radius:16px;box-shadow:0 8px 25px rgba(0,0,0,.08);padding:16px}
+.grid{display:grid;grid-template-columns:360px 1fr;gap:16px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
 
-    .layout{display:grid;grid-template-columns:320px 1fr;gap:16px}
-    @media(max-width:900px){.layout{grid-template-columns:1fr}}
+.muted{color:var(--muted);line-height:1.6}
 
-    .paperBtn{
-      width:100%;
-      text-align:left;
-      padding:12px 12px;
-      border-radius:14px;
-      border:1px solid var(--line);
-      background:#fff;
-      cursor:pointer;
-      margin-bottom:10px;
-      font-weight:800;
-    }
-    .paperBtn small{display:block;color:var(--muted);font-weight:600;margin-top:4px}
-    .paperBtn:hover{box-shadow:0 6px 16px rgba(0,0,0,.08)}
+.paperBtn{
+  width:100%;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:14px;
+  padding:12px;
+  cursor:pointer;
+  text-align:left;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px;
+}
+.paperBtn:hover{box-shadow:0 8px 20px rgba(0,0,0,.07)}
+.tag{font-size:12px;font-weight:800;padding:6px 10px;border-radius:999px;background:#eef2ff;color:#3730a3;white-space:nowrap}
 
-    /* Viewer */
-    .viewerCard{position:relative; overflow:hidden}
-    .toolbar{
-      display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;
-      border:1px solid var(--line);border-radius:14px;padding:10px;background:#fff;
-      position:sticky;top:10px;z-index:20;
-    }
-    .toolbar .left,.toolbar .right{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#eef2ff;color:#3730a3;font-size:12px;font-weight:800}
-    .toolBtn{
-      padding:8px 10px;border-radius:12px;border:1px solid var(--line);
-      background:#fff;cursor:pointer;font-weight:800;
-    }
-    .toolBtn:hover{background:#f9fafb}
-    .pageBox{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;margin-top:12px}
-    .pages{padding:14px; background:#fff}
+.viewerTop{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
+  border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:10px
+}
+.viewerTitle{font-size:18px;font-weight:900}
+.smallNote{font-size:13px;color:var(--muted)}
+.frame{
+  width:100%;
+  height:78vh;
+  border:1px solid var(--line);
+  border-radius:14px;
+  overflow:hidden;
+  background:#fff;
+}
+.frame iframe{
+  width:100%;
+  height:100%;
+  border:0;
+}
 
-    /* Canvas pages */
-    .pdfPage{
-      width:100%;
-      display:flex;
-      justify-content:center;
-      margin:12px 0;
-    }
-    canvas{
-      max-width:100%;
-      height:auto;
-      border-radius:10px;
-      box-shadow:0 10px 24px rgba(0,0,0,.10);
-    }
-
-    /* Ultra-secure UI blocks */
-    body, .viewerCard{
-      -webkit-user-select:none;
-      -moz-user-select:none;
-      user-select:none;
-    }
-
-    /* Transparent overlay to block easy saving / dragging */
-    .shield{
-      position:absolute; inset:0;
-      background:transparent;
-      z-index:30;
-    }
-    /* Allow scroll & click on our own UI by giving toolbar higher z-index */
-    .toolbar{z-index:40}
-    .pages{position:relative; z-index:10}
-
-    /* Optional watermark overlay */
-    .watermark{
-      position:fixed;
-      left:0; top:0;
-      width:100%; height:100%;
-      pointer-events:none;
-      z-index:25;
-      opacity:.08;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      transform:rotate(-25deg);
-      font-size:48px;
-      font-weight:900;
-      color:#111827;
-      text-align:center;
-      white-space:pre-line;
-    }
-  </style>
+.footer{margin-top:18px;background:#0b1220;color:#cbd5e1;padding:14px;font-size:14px}
+</style>
 </head>
 
-<body>
+<body oncontextmenu="return false">
 
 <header class="top">
   <div class="wrap">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
       <div>
-        <div style="font-size:22px;font-weight:900">Brain Booster IQ Class</div>
-        <div style="opacity:.85;font-size:13px">Model Papers • View Only (Ultra Secure)</div>
+        <div style="font-size:22px;font-weight:800">Brain Booster IQ Class</div>
+        <div style="opacity:.85;font-size:14px">Model Papers • View Only</div>
       </div>
       <a class="btn wa" href="https://wa.me/94777238519">WhatsApp</a>
     </div>
@@ -134,164 +90,93 @@
   </div>
 </header>
 
-<main class="wrap">
-  <div class="layout">
+<main class="wrap hero">
+  <div class="card" style="margin-bottom:16px">
+    <div style="font-size:22px;font-weight:900">📄 Model Papers</div>
+    <div class="muted">මෙම පිටුවෙ PDF **view only**. Download button එක hide කරලා තියෙන්නේ.</div>
+    <div class="smallNote">Tip: PDFs `papers/` folder එකට upload කරන්න. Example: <b>papers/model-paper-1.pdf</b></div>
+  </div>
 
-    <!-- LEFT: Paper list -->
-    <section class="card">
-      <h2 style="margin:0 0 10px">📄 Select a Paper</h2>
-      <p class="muted" style="margin-top:0">
-        PDFs must be inside <b>/papers/</b> folder.
-      </p>
+  <div class="grid">
+    <div class="card">
+      <div style="font-weight:900;margin-bottom:10px">Select a paper</div>
+      <div id="paperList"></div>
+      <div class="smallNote">✅ PDF එක click කරාම right-side viewer එකට open වෙයි.</div>
+    </div>
 
-      <button class="paperBtn" onclick="loadPaper('papers/model-paper-1.pdf','Model Paper 01')">
-        Model Paper 01
-        <small>papers/model-paper-1.pdf</small>
-      </button>
-
-      <button class="paperBtn" onclick="loadPaper('papers/model-paper-2.pdf','Model Paper 02')">
-        Model Paper 02
-        <small>papers/model-paper-2.pdf</small>
-      </button>
-
-      <button class="paperBtn" onclick="loadPaper('papers/model-paper-3.pdf','Model Paper 03')">
-        Model Paper 03
-        <small>papers/model-paper-3.pdf</small>
-      </button>
-
-      <hr style="border:none;border-top:1px solid var(--line);margin:14px 0">
-
-      <div class="muted" style="font-size:13px">
-        ✅ No download button <br>
-        ✅ PDF toolbar hidden <br>
-        ✅ Canvas rendering (harder to save) <br>
-        ⚠️ Still not 100% possible to stop screenshots.
-      </div>
-    </section>
-
-    <!-- RIGHT: Viewer -->
-    <section class="card viewerCard" id="viewerCard">
-      <div class="toolbar">
-        <div class="left">
-          <span class="pill" id="paperTitle">No paper loaded</span>
-          <span class="muted" id="pageInfo">—</span>
-        </div>
-        <div class="right">
-          <button class="toolBtn" onclick="zoomOut()">－</button>
-          <button class="toolBtn" onclick="zoomIn()">＋</button>
-          <button class="toolBtn" onclick="scrollTopPages()">Top</button>
-          <button class="toolBtn" onclick="reloadPaper()">Reload</button>
+    <div class="card">
+      <div class="viewerTop">
+        <div>
+          <div class="viewerTitle" id="viewerTitle">Open a paper...</div>
+          <div class="smallNote">Viewer toolbar hidden (view only)</div>
         </div>
       </div>
 
-      <!-- Watermark -->
-      <div class="watermark" id="wm">BRAIN BOOSTER\nVIEW ONLY</div>
-
-      <!-- Transparent Shield -->
-      <div class="shield" title="View Only"></div>
-
-      <div class="pageBox">
-        <div class="pages" id="pages">
-          <div class="muted">Select a paper to view…</div>
-        </div>
+      <div class="frame">
+        <iframe id="pdfFrame" src="" title="PDF Viewer"></iframe>
       </div>
-    </section>
 
+      <div class="smallNote" style="margin-top:10px">
+        ⚠️ Note: Internet එකේ 100% download block කරන්න බැහැ. නමුත් buttons, right-click, toolbar hide කරලා තියෙනවා.
+      </div>
+    </div>
   </div>
 </main>
 
+<footer class="footer">
+  <div class="wrap">© Brain Booster IQ Class • WhatsApp: 0777 238 519</div>
+</footer>
+
 <script>
-  // ====== Ultra Blocking (front-end only) ======
-  document.addEventListener("contextmenu", e => e.preventDefault());
-  document.addEventListener("dragstart", e => e.preventDefault());
+/* ====== ADD YOUR PDF LIST HERE ======
+   Put your real filenames in /papers folder.
+*/
+const PAPERS = [
+  { title: "Model Paper 01", file: "papers/model-paper-1.pdf", tag: "Grade 5" },
+  // Add more like this:
+  // { title: "Model Paper 02", file: "papers/model-paper-2.pdf", tag: "Grade 5" },
+  // { title: "Model Paper 03", file: "papers/model-paper-3.pdf", tag: "Grade 5" },
+];
 
-  document.addEventListener("keydown", (e) => {
-    const k = e.key.toLowerCase();
-    const ctrl = e.ctrlKey || e.metaKey;
+const list = document.getElementById("paperList");
+const frame = document.getElementById("pdfFrame");
+const vTitle = document.getElementById("viewerTitle");
 
-    // Block: Save/Print/ViewSource/DevTools
-    if (ctrl && (k === "s" || k === "p" || k === "u")) { e.preventDefault(); return; }
-    if (e.key === "F12") { e.preventDefault(); return; }
-    if (ctrl && e.shiftKey && (k === "i" || k === "j" || k === "c")) { e.preventDefault(); return; }
+function openPaper(p){
+  vTitle.textContent = p.title;
+
+  // Toolbar hide (works in many browsers)
+  const url = p.file + "#toolbar=0&navpanes=0&scrollbar=0";
+
+  frame.src = url;
+}
+
+function buildList(){
+  list.innerHTML = "";
+  PAPERS.forEach((p)=>{
+    const btn = document.createElement("button");
+    btn.className = "paperBtn";
+    btn.type = "button";
+    btn.innerHTML = `
+      <div>
+        <div style="font-weight:900">${p.title}</div>
+        <div class="smallNote">${p.file}</div>
+      </div>
+      <div class="tag">${p.tag || "PDF"}</div>
+    `;
+    btn.onclick = ()=>openPaper(p);
+    list.appendChild(btn);
   });
+}
+buildList();
 
-  // ====== PDF.js Setup ======
-  // CDN build usually auto sets worker; but for safety:
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
-    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.worker.min.js";
-
-  let CURRENT_URL = "";
-  let CURRENT_TITLE = "";
-  let PDF_DOC = null;
-  let SCALE = 1.3;
-
-  async function loadPaper(url, title){
-    CURRENT_URL = url;
-    CURRENT_TITLE = title;
-    document.getElementById("paperTitle").textContent = title + " • VIEW ONLY";
-    document.getElementById("pages").innerHTML = "<div class='muted'>Loading…</div>";
-
-    try{
-      // Fetch PDF and render to canvas (no iframe)
-      const loadingTask = pdfjsLib.getDocument({ url, withCredentials:false });
-      PDF_DOC = await loadingTask.promise;
-
-      document.getElementById("pageInfo").textContent = `Pages: ${PDF_DOC.numPages}`;
-      await renderAllPages();
-
-      // watermark changes per paper
-      document.getElementById("wm").textContent = `BRAIN BOOSTER\nVIEW ONLY\n${title}`;
-    }catch(err){
-      document.getElementById("pages").innerHTML =
-        "<div class='muted'>❌ Cannot load PDF. Check file path / name.</div>";
-      document.getElementById("pageInfo").textContent = "—";
-      console.error(err);
-    }
+/* Basic anti-download UI attempts */
+document.addEventListener("keydown", (e)=>{
+  // block Ctrl+S / Ctrl+P (not perfect)
+  if((e.ctrlKey || e.metaKey) && (e.key.toLowerCase()==="s" || e.key.toLowerCase()==="p")){
+    e.preventDefault();
   }
-
-  async function renderAllPages(){
-    const root = document.getElementById("pages");
-    root.innerHTML = "";
-
-    for(let p=1; p<=PDF_DOC.numPages; p++){
-      const page = await PDF_DOC.getPage(p);
-      const viewport = page.getViewport({ scale: SCALE });
-
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d", { alpha:false });
-
-      canvas.width = Math.floor(viewport.width);
-      canvas.height = Math.floor(viewport.height);
-
-      const wrap = document.createElement("div");
-      wrap.className = "pdfPage";
-      wrap.appendChild(canvas);
-      root.appendChild(wrap);
-
-      await page.render({ canvasContext: ctx, viewport }).promise;
-    }
-  }
-
-  function zoomIn(){
-    if(!PDF_DOC) return;
-    SCALE = Math.min(2.2, SCALE + 0.15);
-    renderAllPages();
-  }
-
-  function zoomOut(){
-    if(!PDF_DOC) return;
-    SCALE = Math.max(0.8, SCALE - 0.15);
-    renderAllPages();
-  }
-
-  function reloadPaper(){
-    if(!CURRENT_URL) return;
-    loadPaper(CURRENT_URL, CURRENT_TITLE);
-  }
-
-  function scrollTopPages(){
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
+});
 </script>
 
 </body>
