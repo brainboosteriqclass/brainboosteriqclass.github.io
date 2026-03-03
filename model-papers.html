@@ -5,14 +5,13 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Model Papers • Brain Booster</title>
 
-  <!-- PDF.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.js"></script>
+  <!-- PDF.js (jsDelivr - more stable than some CDNs) -->
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.2.67/build/pdf.min.js"></script>
 
   <style>
     :root{
       --bg:#f3f4f6; --card:#fff; --ink:#0b1220; --muted:#5b6472;
       --brand:#111827; --wa:#25D366; --line:#e5e7eb;
-      --danger:#b91c1c; --dangerBg:#fef2f2;
     }
     *{box-sizing:border-box}
     body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
@@ -57,26 +56,19 @@
     canvas{max-width:100%;height:auto;border-radius:10px;box-shadow:0 10px 24px rgba(0,0,0,.10);}
 
     /* Disable selection */
-    body{-webkit-user-select:none;-moz-user-select:none;user-select:none;}
+    body, .viewerCard{-webkit-user-select:none;-moz-user-select:none;user-select:none;}
 
-    /* Watermark */
+    /* Shield */
+    .shield{position:absolute; inset:0; background:transparent; z-index:30;}
     .watermark{
       position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;
-      z-index:25;opacity:.09;display:flex;align-items:center;justify-content:center;
+      z-index:25;opacity:.08;display:flex;align-items:center;justify-content:center;
       transform:rotate(-25deg);font-size:48px;font-weight:900;color:#111827;text-align:center;
       white-space:pre-line;
     }
 
-    /* Error box */
-    .err{
-      border:1px solid #fecaca;
-      background:var(--dangerBg);
-      color:var(--danger);
-      padding:12px;
-      border-radius:14px;
-      font-weight:800;
-      margin-top:12px;
-    }
+    /* Debug line (small) */
+    .debug{font-size:12px;color:#6b7280;margin-top:6px}
   </style>
 </head>
 
@@ -103,100 +95,123 @@
 
 <main class="wrap">
   <div class="layout">
+
     <!-- LEFT -->
     <section class="card">
       <h2 style="margin:0 0 10px">📄 Select a Paper</h2>
       <p class="muted" style="margin-top:0">PDFs must be inside <b>/papers/</b> folder.</p>
 
-      <button class="paperBtn" data-url="papers/model-paper-1.pdf" data-title="Model Paper 01">
+      <!-- Update names here if needed -->
+      <button class="paperBtn" type="button" onclick="loadPaper('papers/model-paper-1.pdf','Model Paper 01')">
         Model Paper 01
         <small>papers/model-paper-1.pdf</small>
       </button>
 
-      <button class="paperBtn" data-url="papers/model-paper-2.pdf" data-title="Model Paper 02">
+      <button class="paperBtn" type="button" onclick="loadPaper('papers/model-paper-2.pdf','Model Paper 02')">
         Model Paper 02
         <small>papers/model-paper-2.pdf</small>
       </button>
 
-      <button class="paperBtn" data-url="papers/model-paper-3.pdf" data-title="Model Paper 03">
+      <button class="paperBtn" type="button" onclick="loadPaper('papers/model-paper-3.pdf','Model Paper 03')">
         Model Paper 03
         <small>papers/model-paper-3.pdf</small>
       </button>
 
       <hr style="border:none;border-top:1px solid var(--line);margin:14px 0">
+
       <div class="muted" style="font-size:13px">
         ✅ No download buttons<br>
-        ✅ Canvas render (no PDF toolbar)<br>
-        ✅ Watermark + key blocks<br>
-        ⚠️ Screenshots still possible (cannot be 100% stopped)
+        ✅ No PDF toolbar (canvas rendering)<br>
+        ✅ Watermark + basic key blocks<br>
+        ⚠️ Screenshots still possible
       </div>
+
+      <div class="debug" id="dbg"></div>
     </section>
 
     <!-- RIGHT -->
     <section class="card viewerCard">
       <div class="toolbar">
         <div class="left">
-          <span class="pill" id="paperTitle">Loading…</span>
+          <span class="pill" id="paperTitle">No paper loaded</span>
           <span class="muted" id="pageInfo">—</span>
         </div>
         <div class="right">
-          <button class="toolBtn" type="button" id="zOut">－</button>
-          <button class="toolBtn" type="button" id="zIn">＋</button>
-          <button class="toolBtn" type="button" id="goTop">Top</button>
-          <button class="toolBtn" type="button" id="reload">Reload</button>
+          <button class="toolBtn" type="button" onclick="zoomOut()">－</button>
+          <button class="toolBtn" type="button" onclick="zoomIn()">＋</button>
+          <button class="toolBtn" type="button" onclick="scrollTopPages()">Top</button>
+          <button class="toolBtn" type="button" onclick="reloadPaper()">Reload</button>
         </div>
       </div>
 
       <div class="watermark" id="wm">BRAIN BOOSTER\nVIEW ONLY</div>
+      <div class="shield" title="View Only"></div>
 
       <div class="pageBox">
         <div class="pages" id="pages">
-          <div class="muted">Loading…</div>
+          <div class="muted">Select a paper to view…</div>
         </div>
       </div>
     </section>
+
   </div>
 </main>
 
 <script>
-  // Front-end blocking (basic)
+  // ============ Basic front-end blocking (not perfect security) ============
   document.addEventListener("contextmenu", e => e.preventDefault());
   document.addEventListener("dragstart", e => e.preventDefault());
+
   document.addEventListener("keydown", (e) => {
     const k = e.key.toLowerCase();
     const ctrl = e.ctrlKey || e.metaKey;
-    if (ctrl && (k === "s" || k === "p" || k === "u")) e.preventDefault();
-    if (e.key === "F12") e.preventDefault();
-    if (ctrl && e.shiftKey && (k === "i" || k === "j" || k === "c")) e.preventDefault();
+
+    // Block Save/Print/ViewSource
+    if (ctrl && (k === "s" || k === "p" || k === "u")) { e.preventDefault(); return; }
+
+    // Block DevTools shortcuts
+    if (e.key === "F12") { e.preventDefault(); return; }
+    if (ctrl && e.shiftKey && (k === "i" || k === "j" || k === "c")) { e.preventDefault(); return; }
   });
 
-  // PDF.js worker
+  // ============ PDF.js Worker ============
+  // Must point to worker file (jsDelivr)
   pdfjsLib.GlobalWorkerOptions.workerSrc =
-    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.worker.min.js";
+    "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.2.67/build/pdf.worker.min.js";
 
   let CURRENT_URL = "";
   let CURRENT_TITLE = "";
   let PDF_DOC = null;
   let SCALE = 1.25;
 
-  function showError(msg){
-    const root = document.getElementById("pages");
-    root.innerHTML = `<div class="err">❌ ${msg}</div>`;
+  function showDebug(msg){
+    const el = document.getElementById("dbg");
+    el.textContent = msg || "";
   }
 
-  async function loadPaper(url, title){
-    CURRENT_URL = url;
+  // Make ABSOLUTE same-origin URL to avoid mixed/relative issues:
+  function makeAbsoluteSameOrigin(relPath){
+    // relPath like "papers/model-paper-1.pdf"
+    return window.location.origin.replace(/\/$/,"") + "/" + relPath.replace(/^\//,"");
+  }
+
+  async function loadPaper(relUrl, title){
+    CURRENT_URL = relUrl;
     CURRENT_TITLE = title;
 
-    document.getElementById("paperTitle").textContent = `${title} • VIEW ONLY`;
-    document.getElementById("pageInfo").textContent = "Loading…";
-    document.getElementById("wm").textContent = `BRAIN BOOSTER\nVIEW ONLY\n${title}`;
+    document.getElementById("paperTitle").textContent = title + " • VIEW ONLY";
     document.getElementById("pages").innerHTML = "<div class='muted'>Loading…</div>";
+    document.getElementById("pageInfo").textContent = "—";
+    document.getElementById("wm").textContent = `BRAIN BOOSTER\nVIEW ONLY\n${title}`;
+
+    const absUrl = makeAbsoluteSameOrigin(relUrl);
+    showDebug(`Opening: ${absUrl}  (Tip: if HTTPS broken, open site with http://)`);
 
     try{
-      // Safer settings for static hosts
+      // More robust settings
       const task = pdfjsLib.getDocument({
-        url,
+        url: absUrl,
+        withCredentials: false,
         disableStream: true,
         disableAutoFetch: true
       });
@@ -206,17 +221,20 @@
       await renderAllPages();
     }catch(err){
       console.error(err);
+      document.getElementById("pages").innerHTML =
+        "<div class='muted'>❌ Cannot load PDF.<br><br>" +
+        "Most common reason: HTTPS certificate / DNS issue on your custom domain.<br>" +
+        "Try opening the website with <b>http://</b> (not https) until GitHub Pages HTTPS is green.<br><br>" +
+        "Also confirm the file exists in /papers/ and the name matches exactly.</div>";
       document.getElementById("pageInfo").textContent = "—";
-      showError("Cannot load PDF. If your site is HTTPS with certificate error, use HTTP until GitHub Pages HTTPS becomes available.");
     }
   }
 
   async function renderAllPages(){
-    if(!PDF_DOC) return;
     const root = document.getElementById("pages");
     root.innerHTML = "";
 
-    for(let p=1; p<=PDF_DOC.numPages; p++){
+    for(let p = 1; p <= PDF_DOC.numPages; p++){
       const page = await PDF_DOC.getPage(p);
       const viewport = page.getViewport({ scale: SCALE });
 
@@ -235,22 +253,26 @@
     }
   }
 
-  // UI buttons
-  document.getElementById("zIn").onclick = () => { if(!PDF_DOC) return; SCALE = Math.min(2.0, SCALE + 0.15); renderAllPages(); };
-  document.getElementById("zOut").onclick = () => { if(!PDF_DOC) return; SCALE = Math.max(0.8, SCALE - 0.15); renderAllPages(); };
-  document.getElementById("reload").onclick = () => { if(!CURRENT_URL) return; loadPaper(CURRENT_URL, CURRENT_TITLE); };
-  document.getElementById("goTop").onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  function zoomIn(){
+    if(!PDF_DOC) return;
+    SCALE = Math.min(2.0, SCALE + 0.15);
+    renderAllPages();
+  }
 
-  // Paper buttons
-  document.querySelectorAll(".paperBtn").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      loadPaper(btn.dataset.url, btn.dataset.title);
-    });
-  });
+  function zoomOut(){
+    if(!PDF_DOC) return;
+    SCALE = Math.max(0.8, SCALE - 0.15);
+    renderAllPages();
+  }
 
-  // ✅ Auto-load first paper on page open
-  loadPaper("papers/model-paper-1.pdf", "Model Paper 01");
+  function reloadPaper(){
+    if(!CURRENT_URL) return;
+    loadPaper(CURRENT_URL, CURRENT_TITLE);
+  }
+
+  function scrollTopPages(){
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 </script>
-
 </body>
 </html>
