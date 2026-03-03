@@ -5,12 +5,14 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Model Papers • Brain Booster</title>
 
+  <!-- PDF.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.js"></script>
 
   <style>
     :root{
       --bg:#f3f4f6; --card:#fff; --ink:#0b1220; --muted:#5b6472;
       --brand:#111827; --wa:#25D366; --line:#e5e7eb;
+      --danger:#b91c1c; --dangerBg:#fef2f2;
     }
     *{box-sizing:border-box}
     body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
@@ -34,11 +36,12 @@
     .paperBtn small{display:block;color:var(--muted);font-weight:600;margin-top:4px}
     .paperBtn:hover{box-shadow:0 6px 16px rgba(0,0,0,.08)}
 
+    /* Viewer */
     .viewerCard{position:relative; overflow:hidden}
     .toolbar{
       display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;
       border:1px solid var(--line);border-radius:14px;padding:10px;background:#fff;
-      position:sticky;top:10px;z-index:60;
+      position:sticky;top:10px;z-index:40;
     }
     .toolbar .left,.toolbar .right{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
     .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#eef2ff;color:#3730a3;font-size:12px;font-weight:800}
@@ -53,37 +56,27 @@
     .pdfPage{width:100%;display:flex;justify-content:center;margin:12px 0;}
     canvas{max-width:100%;height:auto;border-radius:10px;box-shadow:0 10px 24px rgba(0,0,0,.10);}
 
-    body, .viewerCard{-webkit-user-select:none;-moz-user-select:none;user-select:none;}
-    .shield{position:absolute; inset:0; background:transparent; z-index:40;}
+    /* Disable selection */
+    body{-webkit-user-select:none;-moz-user-select:none;user-select:none;}
+
+    /* Watermark */
     .watermark{
       position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;
-      z-index:35;opacity:.08;display:flex;align-items:center;justify-content:center;
+      z-index:25;opacity:.09;display:flex;align-items:center;justify-content:center;
       transform:rotate(-25deg);font-size:48px;font-weight:900;color:#111827;text-align:center;
       white-space:pre-line;
     }
 
-    /* PIN gate overlay */
-    .gate{
-      position:fixed; inset:0; background:rgba(0,0,0,.55);
-      display:flex; align-items:center; justify-content:center; z-index:9999;
-      padding:16px;
+    /* Error box */
+    .err{
+      border:1px solid #fecaca;
+      background:var(--dangerBg);
+      color:var(--danger);
+      padding:12px;
+      border-radius:14px;
+      font-weight:800;
+      margin-top:12px;
     }
-    .gateBox{
-      width:100%; max-width:420px; background:#fff; border-radius:18px; padding:18px;
-      box-shadow:0 16px 50px rgba(0,0,0,.25);
-    }
-    .gateBox h2{margin:0 0 8px}
-    .gateBox input{
-      width:100%; padding:12px 14px; border-radius:12px; border:1px solid #d1d5db;
-      font-size:16px;
-    }
-    .gateRow{display:flex; gap:10px; margin-top:12px}
-    .gateRow button{
-      flex:1; padding:12px 14px; border-radius:12px; border:0; cursor:pointer; font-weight:900;
-    }
-    .ok{background:#111827;color:#fff}
-    .cancel{background:#e5e7eb}
-    .err{color:#b91c1c; font-weight:800; margin-top:10px; display:none}
   </style>
 </head>
 
@@ -108,40 +101,24 @@
   </div>
 </header>
 
-<!-- PIN GATE -->
-<div class="gate" id="gate">
-  <div class="gateBox">
-    <h2>🔒 Enter Access PIN</h2>
-    <div class="muted">Model papers are view-only. Please enter the PIN to continue.</div>
-    <div style="margin-top:12px">
-      <input id="pin" type="password" placeholder="Enter PIN" autocomplete="off" />
-      <div class="err" id="err">❌ Wrong PIN</div>
-      <div class="gateRow">
-        <button class="cancel" type="button" onclick="location.href='index.html'">Back</button>
-        <button class="ok" type="button" onclick="unlock()">Unlock</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <main class="wrap">
   <div class="layout">
+    <!-- LEFT -->
     <section class="card">
       <h2 style="margin:0 0 10px">📄 Select a Paper</h2>
       <p class="muted" style="margin-top:0">PDFs must be inside <b>/papers/</b> folder.</p>
 
-      <button class="paperBtn" type="button" onclick="loadPaper('papers/model-paper-1.pdf','Model Paper 01')">
+      <button class="paperBtn" data-url="papers/model-paper-1.pdf" data-title="Model Paper 01">
         Model Paper 01
         <small>papers/model-paper-1.pdf</small>
       </button>
 
-      <!-- Only keep buttons for files you actually uploaded -->
-      <button class="paperBtn" type="button" onclick="loadPaper('papers/model-paper-2.pdf','Model Paper 02')">
+      <button class="paperBtn" data-url="papers/model-paper-2.pdf" data-title="Model Paper 02">
         Model Paper 02
         <small>papers/model-paper-2.pdf</small>
       </button>
 
-      <button class="paperBtn" type="button" onclick="loadPaper('papers/model-paper-3.pdf','Model Paper 03')">
+      <button class="paperBtn" data-url="papers/model-paper-3.pdf" data-title="Model Paper 03">
         Model Paper 03
         <small>papers/model-paper-3.pdf</small>
       </button>
@@ -149,32 +126,32 @@
       <hr style="border:none;border-top:1px solid var(--line);margin:14px 0">
       <div class="muted" style="font-size:13px">
         ✅ No download buttons<br>
-        ✅ Canvas rendering (no browser PDF toolbar)<br>
-        ✅ PIN gate + watermark<br>
-        ⚠️ Screenshots still possible
+        ✅ Canvas render (no PDF toolbar)<br>
+        ✅ Watermark + key blocks<br>
+        ⚠️ Screenshots still possible (cannot be 100% stopped)
       </div>
     </section>
 
+    <!-- RIGHT -->
     <section class="card viewerCard">
       <div class="toolbar">
         <div class="left">
-          <span class="pill" id="paperTitle">No paper loaded</span>
+          <span class="pill" id="paperTitle">Loading…</span>
           <span class="muted" id="pageInfo">—</span>
         </div>
         <div class="right">
-          <button class="toolBtn" type="button" onclick="zoomOut()">－</button>
-          <button class="toolBtn" type="button" onclick="zoomIn()">＋</button>
-          <button class="toolBtn" type="button" onclick="scrollTopPages()">Top</button>
-          <button class="toolBtn" type="button" onclick="reloadPaper()">Reload</button>
+          <button class="toolBtn" type="button" id="zOut">－</button>
+          <button class="toolBtn" type="button" id="zIn">＋</button>
+          <button class="toolBtn" type="button" id="goTop">Top</button>
+          <button class="toolBtn" type="button" id="reload">Reload</button>
         </div>
       </div>
 
       <div class="watermark" id="wm">BRAIN BOOSTER\nVIEW ONLY</div>
-      <div class="shield" title="View Only"></div>
 
       <div class="pageBox">
         <div class="pages" id="pages">
-          <div class="muted">Select a paper to view…</div>
+          <div class="muted">Loading…</div>
         </div>
       </div>
     </section>
@@ -182,28 +159,7 @@
 </main>
 
 <script>
-  /* ===== PIN SETTINGS ===== */
-  const ACCESS_PIN = "2026"; // <-- CHANGE THIS PIN
-  const PIN_KEY = "bb_pin_ok_v1";
-
-  function unlock(){
-    const v = (document.getElementById("pin").value || "").trim();
-    const err = document.getElementById("err");
-    if(v === ACCESS_PIN){
-      localStorage.setItem(PIN_KEY, "1");
-      document.getElementById("gate").style.display = "none";
-      err.style.display = "none";
-    }else{
-      err.style.display = "block";
-    }
-  }
-  (function(){
-    if(localStorage.getItem(PIN_KEY) === "1"){
-      document.getElementById("gate").style.display = "none";
-    }
-  })();
-
-  /* ===== basic front-end blocking (not perfect) ===== */
+  // Front-end blocking (basic)
   document.addEventListener("contextmenu", e => e.preventDefault());
   document.addEventListener("dragstart", e => e.preventDefault());
   document.addEventListener("keydown", (e) => {
@@ -214,6 +170,7 @@
     if (ctrl && e.shiftKey && (k === "i" || k === "j" || k === "c")) e.preventDefault();
   });
 
+  // PDF.js worker
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.worker.min.js";
 
@@ -222,35 +179,40 @@
   let PDF_DOC = null;
   let SCALE = 1.25;
 
-  async function loadPaper(url, title){
-    // Require PIN
-    if(document.getElementById("gate").style.display !== "none"){
-      document.getElementById("err").style.display = "none";
-      return;
-    }
+  function showError(msg){
+    const root = document.getElementById("pages");
+    root.innerHTML = `<div class="err">❌ ${msg}</div>`;
+  }
 
+  async function loadPaper(url, title){
     CURRENT_URL = url;
     CURRENT_TITLE = title;
 
-    document.getElementById("paperTitle").textContent = title + " • VIEW ONLY";
-    document.getElementById("pages").innerHTML = "<div class='muted'>Loading…</div>";
+    document.getElementById("paperTitle").textContent = `${title} • VIEW ONLY`;
+    document.getElementById("pageInfo").textContent = "Loading…";
     document.getElementById("wm").textContent = `BRAIN BOOSTER\nVIEW ONLY\n${title}`;
+    document.getElementById("pages").innerHTML = "<div class='muted'>Loading…</div>";
 
     try{
-      const loadingTask = pdfjsLib.getDocument({ url });
-      PDF_DOC = await loadingTask.promise;
+      // Safer settings for static hosts
+      const task = pdfjsLib.getDocument({
+        url,
+        disableStream: true,
+        disableAutoFetch: true
+      });
 
+      PDF_DOC = await task.promise;
       document.getElementById("pageInfo").textContent = `Pages: ${PDF_DOC.numPages}`;
       await renderAllPages();
     }catch(err){
-      document.getElementById("pages").innerHTML =
-        "<div class='muted'>❌ Cannot load PDF. Check file path/name.</div>";
-      document.getElementById("pageInfo").textContent = "—";
       console.error(err);
+      document.getElementById("pageInfo").textContent = "—";
+      showError("Cannot load PDF. If your site is HTTPS with certificate error, use HTTP until GitHub Pages HTTPS becomes available.");
     }
   }
 
   async function renderAllPages(){
+    if(!PDF_DOC) return;
     const root = document.getElementById("pages");
     root.innerHTML = "";
 
@@ -273,10 +235,22 @@
     }
   }
 
-  function zoomIn(){ if(!PDF_DOC) return; SCALE = Math.min(2.0, SCALE + 0.15); renderAllPages(); }
-  function zoomOut(){ if(!PDF_DOC) return; SCALE = Math.max(0.8, SCALE - 0.15); renderAllPages(); }
-  function reloadPaper(){ if(!CURRENT_URL) return; loadPaper(CURRENT_URL, CURRENT_TITLE); }
-  function scrollTopPages(){ window.scrollTo({ top: 0, behavior: "smooth" }); }
+  // UI buttons
+  document.getElementById("zIn").onclick = () => { if(!PDF_DOC) return; SCALE = Math.min(2.0, SCALE + 0.15); renderAllPages(); };
+  document.getElementById("zOut").onclick = () => { if(!PDF_DOC) return; SCALE = Math.max(0.8, SCALE - 0.15); renderAllPages(); };
+  document.getElementById("reload").onclick = () => { if(!CURRENT_URL) return; loadPaper(CURRENT_URL, CURRENT_TITLE); };
+  document.getElementById("goTop").onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
+
+  // Paper buttons
+  document.querySelectorAll(".paperBtn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      loadPaper(btn.dataset.url, btn.dataset.title);
+    });
+  });
+
+  // ✅ Auto-load first paper on page open
+  loadPaper("papers/model-paper-1.pdf", "Model Paper 01");
 </script>
+
 </body>
 </html>
