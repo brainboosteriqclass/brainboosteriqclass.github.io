@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Model Papers • Brain Booster</title>
 
-  <!-- PDF.js -->
+  <!-- PDF.js (official build) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.js"></script>
 
   <style>
@@ -22,6 +22,7 @@
     nav a:hover{background:rgba(255,255,255,.12)}
     .btn{display:inline-block;text-decoration:none;border-radius:12px;padding:10px 14px;font-weight:bold;border:0;cursor:pointer}
     .btn.wa{background:var(--wa);color:#fff}
+    .btn.dark{background:#111827;color:#fff}
     .card{background:var(--card);border-radius:16px;box-shadow:0 8px 25px rgba(0,0,0,.08);padding:16px;margin:16px 0}
     .muted{color:var(--muted);line-height:1.6}
 
@@ -29,8 +30,15 @@
     @media(max-width:900px){.layout{grid-template-columns:1fr}}
 
     .paperBtn{
-      width:100%;text-align:left;padding:12px;border-radius:14px;border:1px solid var(--line);
-      background:#fff;cursor:pointer;margin-bottom:10px;font-weight:800;
+      width:100%;
+      text-align:left;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      margin-bottom:10px;
+      font-weight:800;
     }
     .paperBtn small{display:block;color:var(--muted);font-weight:600;margin-top:4px}
     .paperBtn:hover{box-shadow:0 6px 16px rgba(0,0,0,.08)}
@@ -40,7 +48,7 @@
     .toolbar{
       display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;
       border:1px solid var(--line);border-radius:14px;padding:10px;background:#fff;
-      position:sticky;top:10px;z-index:40;
+      position:sticky;top:10px;z-index:20;
     }
     .toolbar .left,.toolbar .right{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
     .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#eef2ff;color:#3730a3;font-size:12px;font-weight:800}
@@ -50,32 +58,68 @@
     }
     .toolBtn:hover{background:#f9fafb}
     .pageBox{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;margin-top:12px}
-    .pages{padding:14px; background:#fff; position:relative; z-index:10}
+    .pages{padding:14px; background:#fff}
 
-    .pdfPage{width:100%;display:flex;justify-content:center;margin:12px 0;}
-    canvas{max-width:100%;height:auto;border-radius:10px;box-shadow:0 10px 24px rgba(0,0,0,.10);}
+    /* Canvas pages */
+    .pdfPage{
+      width:100%;
+      display:flex;
+      justify-content:center;
+      margin:12px 0;
+    }
+    canvas{
+      max-width:100%;
+      height:auto;
+      border-radius:10px;
+      box-shadow:0 10px 24px rgba(0,0,0,.10);
+    }
 
-    /* Disable selection */
-    body, .viewerCard{-webkit-user-select:none;-moz-user-select:none;user-select:none;}
+    /* Ultra-secure UI blocks */
+    body, .viewerCard{
+      -webkit-user-select:none;
+      -moz-user-select:none;
+      user-select:none;
+    }
 
-    /* Shield */
-    .shield{position:absolute; inset:0; background:transparent; z-index:30;}
+    /* Transparent overlay to block easy saving / dragging */
+    .shield{
+      position:absolute; inset:0;
+      background:transparent;
+      z-index:30;
+    }
+    /* Allow scroll & click on our own UI by giving toolbar higher z-index */
+    .toolbar{z-index:40}
+    .pages{position:relative; z-index:10}
+
+    /* Optional watermark overlay */
     .watermark{
-      position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;
-      z-index:25;opacity:.08;display:flex;align-items:center;justify-content:center;
-      transform:rotate(-25deg);font-size:48px;font-weight:900;color:#111827;text-align:center;
+      position:fixed;
+      left:0; top:0;
+      width:100%; height:100%;
+      pointer-events:none;
+      z-index:25;
+      opacity:.08;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transform:rotate(-25deg);
+      font-size:48px;
+      font-weight:900;
+      color:#111827;
+      text-align:center;
       white-space:pre-line;
     }
   </style>
 </head>
 
 <body>
+
 <header class="top">
   <div class="wrap">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
       <div>
         <div style="font-size:22px;font-weight:900">Brain Booster IQ Class</div>
-        <div style="opacity:.85;font-size:13px">Model Papers • View Only</div>
+        <div style="opacity:.85;font-size:13px">Model Papers • View Only (Ultra Secure)</div>
       </div>
       <a class="btn wa" href="https://wa.me/94777238519">WhatsApp</a>
     </div>
@@ -92,12 +136,14 @@
 
 <main class="wrap">
   <div class="layout">
-    <!-- LEFT -->
+
+    <!-- LEFT: Paper list -->
     <section class="card">
       <h2 style="margin:0 0 10px">📄 Select a Paper</h2>
-      <p class="muted" style="margin-top:0">PDFs must be inside <b>/papers/</b> folder.</p>
+      <p class="muted" style="margin-top:0">
+        PDFs must be inside <b>/papers/</b> folder.
+      </p>
 
-      <!-- CHANGE file names here if needed -->
       <button class="paperBtn" onclick="loadPaper('papers/model-paper-1.pdf','Model Paper 01')">
         Model Paper 01
         <small>papers/model-paper-1.pdf</small>
@@ -114,30 +160,34 @@
       </button>
 
       <hr style="border:none;border-top:1px solid var(--line);margin:14px 0">
+
       <div class="muted" style="font-size:13px">
-        ✅ No download buttons<br>
-        ✅ No PDF toolbar (canvas)<br>
-        ✅ Watermark + basic key blocks<br>
-        ⚠️ Screenshots still possible
+        ✅ No download button <br>
+        ✅ PDF toolbar hidden <br>
+        ✅ Canvas rendering (harder to save) <br>
+        ⚠️ Still not 100% possible to stop screenshots.
       </div>
     </section>
 
-    <!-- RIGHT -->
-    <section class="card viewerCard">
+    <!-- RIGHT: Viewer -->
+    <section class="card viewerCard" id="viewerCard">
       <div class="toolbar">
         <div class="left">
           <span class="pill" id="paperTitle">No paper loaded</span>
           <span class="muted" id="pageInfo">—</span>
         </div>
         <div class="right">
-          <button class="toolBtn" type="button" onclick="zoomOut()">－</button>
-          <button class="toolBtn" type="button" onclick="zoomIn()">＋</button>
-          <button class="toolBtn" type="button" onclick="scrollTopPages()">Top</button>
-          <button class="toolBtn" type="button" onclick="reloadPaper()">Reload</button>
+          <button class="toolBtn" onclick="zoomOut()">－</button>
+          <button class="toolBtn" onclick="zoomIn()">＋</button>
+          <button class="toolBtn" onclick="scrollTopPages()">Top</button>
+          <button class="toolBtn" onclick="reloadPaper()">Reload</button>
         </div>
       </div>
 
+      <!-- Watermark -->
       <div class="watermark" id="wm">BRAIN BOOSTER\nVIEW ONLY</div>
+
+      <!-- Transparent Shield -->
       <div class="shield" title="View Only"></div>
 
       <div class="pageBox">
@@ -146,47 +196,54 @@
         </div>
       </div>
     </section>
+
   </div>
 </main>
 
 <script>
-  // Basic front-end blocking (NOT perfect security)
+  // ====== Ultra Blocking (front-end only) ======
   document.addEventListener("contextmenu", e => e.preventDefault());
   document.addEventListener("dragstart", e => e.preventDefault());
+
   document.addEventListener("keydown", (e) => {
     const k = e.key.toLowerCase();
     const ctrl = e.ctrlKey || e.metaKey;
-    if (ctrl && (k === "s" || k === "p" || k === "u")) e.preventDefault();
-    if (e.key === "F12") e.preventDefault();
-    if (ctrl && e.shiftKey && (k === "i" || k === "j" || k === "c")) e.preventDefault();
+
+    // Block: Save/Print/ViewSource/DevTools
+    if (ctrl && (k === "s" || k === "p" || k === "u")) { e.preventDefault(); return; }
+    if (e.key === "F12") { e.preventDefault(); return; }
+    if (ctrl && e.shiftKey && (k === "i" || k === "j" || k === "c")) { e.preventDefault(); return; }
   });
 
+  // ====== PDF.js Setup ======
+  // CDN build usually auto sets worker; but for safety:
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.worker.min.js";
 
   let CURRENT_URL = "";
   let CURRENT_TITLE = "";
   let PDF_DOC = null;
-  let SCALE = 1.25;
+  let SCALE = 1.3;
 
   async function loadPaper(url, title){
     CURRENT_URL = url;
     CURRENT_TITLE = title;
-
     document.getElementById("paperTitle").textContent = title + " • VIEW ONLY";
     document.getElementById("pages").innerHTML = "<div class='muted'>Loading…</div>";
-    document.getElementById("wm").textContent = `BRAIN BOOSTER\nVIEW ONLY\n${title}`;
 
     try{
-      // IMPORTANT: works best when your site is HTTP until HTTPS fixed
+      // Fetch PDF and render to canvas (no iframe)
       const loadingTask = pdfjsLib.getDocument({ url, withCredentials:false });
       PDF_DOC = await loadingTask.promise;
 
       document.getElementById("pageInfo").textContent = `Pages: ${PDF_DOC.numPages}`;
       await renderAllPages();
+
+      // watermark changes per paper
+      document.getElementById("wm").textContent = `BRAIN BOOSTER\nVIEW ONLY\n${title}`;
     }catch(err){
       document.getElementById("pages").innerHTML =
-        "<div class='muted'>❌ Cannot load PDF. Check file path/name OR your HTTPS certificate issue.</div>";
+        "<div class='muted'>❌ Cannot load PDF. Check file path / name.</div>";
       document.getElementById("pageInfo").textContent = "—";
       console.error(err);
     }
@@ -215,10 +272,27 @@
     }
   }
 
-  function zoomIn(){ if(!PDF_DOC) return; SCALE = Math.min(2.0, SCALE + 0.15); renderAllPages(); }
-  function zoomOut(){ if(!PDF_DOC) return; SCALE = Math.max(0.8, SCALE - 0.15); renderAllPages(); }
-  function reloadPaper(){ if(!CURRENT_URL) return; loadPaper(CURRENT_URL, CURRENT_TITLE); }
-  function scrollTopPages(){ window.scrollTo({ top: 0, behavior: "smooth" }); }
+  function zoomIn(){
+    if(!PDF_DOC) return;
+    SCALE = Math.min(2.2, SCALE + 0.15);
+    renderAllPages();
+  }
+
+  function zoomOut(){
+    if(!PDF_DOC) return;
+    SCALE = Math.max(0.8, SCALE - 0.15);
+    renderAllPages();
+  }
+
+  function reloadPaper(){
+    if(!CURRENT_URL) return;
+    loadPaper(CURRENT_URL, CURRENT_TITLE);
+  }
+
+  function scrollTopPages(){
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 </script>
+
 </body>
 </html>
